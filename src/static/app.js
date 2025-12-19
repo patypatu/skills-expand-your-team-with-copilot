@@ -3,24 +3,27 @@ document.addEventListener("DOMContentLoaded", () => {
   const darkModeToggle = document.getElementById("dark-mode-toggle");
   const darkModeIcon = document.getElementById("dark-mode-icon");
   
-  // Check for saved dark mode preference or default to light mode
-  const savedTheme = localStorage.getItem("theme") || "light";
-  document.documentElement.setAttribute("data-theme", savedTheme);
-  updateDarkModeIcon(savedTheme);
-  
-  // Toggle dark mode
-  darkModeToggle.addEventListener("click", () => {
-    const currentTheme = document.documentElement.getAttribute("data-theme");
-    const newTheme = currentTheme === "dark" ? "light" : "dark";
+  // Initialize dark mode if elements exist
+  if (darkModeToggle && darkModeIcon) {
+    // Check for saved dark mode preference or default to light mode
+    const savedTheme = localStorage.getItem("theme") || "light";
+    document.documentElement.setAttribute("data-theme", savedTheme);
+    updateDarkModeIcon(savedTheme);
     
-    document.documentElement.setAttribute("data-theme", newTheme);
-    localStorage.setItem("theme", newTheme);
-    updateDarkModeIcon(newTheme);
-  });
-  
-  // Update dark mode icon
-  function updateDarkModeIcon(theme) {
-    darkModeIcon.textContent = theme === "dark" ? "☀️" : "🌙";
+    // Toggle dark mode
+    darkModeToggle.addEventListener("click", () => {
+      const currentTheme = document.documentElement.getAttribute("data-theme");
+      const newTheme = currentTheme === "dark" ? "light" : "dark";
+      
+      document.documentElement.setAttribute("data-theme", newTheme);
+      localStorage.setItem("theme", newTheme);
+      updateDarkModeIcon(newTheme);
+    });
+    
+    // Update dark mode icon
+    function updateDarkModeIcon(theme) {
+      darkModeIcon.textContent = theme === "dark" ? "☀️" : "🌙";
+    }
   }
 
   // DOM elements
