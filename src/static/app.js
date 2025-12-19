@@ -498,7 +498,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const cleanDescription = sanitizeForSharing(description);
     const cleanSchedule = sanitizeForSharing(schedule);
     
-    const pageUrl = window.location.origin + window.location.pathname;
+    // Use full URL to preserve any query parameters or state
+    const pageUrl = window.location.href;
     const shareText = `Check out ${cleanName} at Mergington High School! ${cleanDescription} Schedule: ${cleanSchedule}`;
     
     return {
@@ -512,11 +513,11 @@ document.addEventListener("DOMContentLoaded", () => {
   function handleShare(platform, activityName, description, schedule) {
     const shareLinks = generateShareLinks(activityName, description, schedule);
     
-    // Use window.location.href for email, window.open for social media
+    // Use window.location.href for email, window.open with security features for social media
     if (platform === 'email') {
       window.location.href = shareLinks.email;
     } else {
-      window.open(shareLinks[platform], '_blank', 'width=600,height=400');
+      window.open(shareLinks[platform], '_blank', 'noopener,noreferrer,width=600,height=400');
     }
   }
 
