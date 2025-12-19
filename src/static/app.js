@@ -474,8 +474,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Function to sanitize text for sharing
   function sanitizeForSharing(text) {
-    // Remove any HTML tags and trim whitespace
-    return String(text || '').replace(/<[^>]*>/g, '').trim();
+    // Remove any HTML tags iteratively to prevent multi-character bypass
+    let sanitized = String(text || '');
+    let previous;
+    do {
+      previous = sanitized;
+      sanitized = sanitized.replace(/<[^>]*>/g, '');
+    } while (sanitized !== previous);
+    return sanitized.trim();
   }
 
   // Function to escape HTML for attributes
