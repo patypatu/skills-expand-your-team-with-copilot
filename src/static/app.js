@@ -567,28 +567,30 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     `;
 
-    // Create social share buttons
-    const escapedName = escapeHtml(name);
+    // Create social share buttons (no data-activity needed, passed directly to handler)
     const shareButtonsHtml = `
       <div class="share-buttons">
         <span class="share-label">Share:</span>
-        <button class="share-btn share-twitter" data-platform="twitter" data-activity="${escapedName}" title="Share on Twitter">
+        <button class="share-btn share-twitter" data-platform="twitter" title="Share on Twitter">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
             <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
           </svg>
         </button>
-        <button class="share-btn share-facebook" data-platform="facebook" data-activity="${escapedName}" title="Share on Facebook">
+        <button class="share-btn share-facebook" data-platform="facebook" title="Share on Facebook">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
           </svg>
         </button>
-        <button class="share-btn share-email" data-platform="email" data-activity="${escapedName}" title="Share via Email">
+        <button class="share-btn share-email" data-platform="email" title="Share via Email">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
             <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
           </svg>
         </button>
       </div>
     `;
+
+    // Escape HTML for attributes used in other parts of the card
+    const escapedName = escapeHtml(name);
 
     activityCard.innerHTML = `
       ${tagHtml}
