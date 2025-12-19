@@ -475,9 +475,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Function to sanitize text for sharing
   function sanitizeForSharing(text) {
     // Remove any HTML tags and trim whitespace
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.textContent.trim();
+    return String(text || '').replace(/<[^>]*>/g, '').trim();
   }
 
   // Function to escape HTML for attributes
@@ -508,9 +506,9 @@ document.addEventListener("DOMContentLoaded", () => {
   function handleShare(platform, activityName, description, schedule) {
     const shareLinks = generateShareLinks(activityName, description, schedule);
     
-    // Use window.open for all platforms for consistency
+    // Use window.location.href for email, window.open for social media
     if (platform === 'email') {
-      window.open(shareLinks.email, '_self');
+      window.location.href = shareLinks.email;
     } else {
       window.open(shareLinks[platform], '_blank', 'width=600,height=400');
     }
