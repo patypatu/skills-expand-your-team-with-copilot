@@ -472,15 +472,35 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Function to sanitize text for sharing
+  function sanitizeForSharing(text) {
+    // Remove any HTML tags and trim whitespace
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.textContent.trim();
+  }
+
+  // Function to escape HTML for attributes
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
   // Function to generate share links
   function generateShareLinks(activityName, description, schedule) {
+    // Sanitize all inputs before using them
+    const cleanName = sanitizeForSharing(activityName);
+    const cleanDescription = sanitizeForSharing(description);
+    const cleanSchedule = sanitizeForSharing(schedule);
+    
     const pageUrl = window.location.origin + window.location.pathname;
-    const shareText = `Check out ${activityName} at Mergington High School! ${description} Schedule: ${schedule}`;
+    const shareText = `Check out ${cleanName} at Mergington High School! ${cleanDescription} Schedule: ${cleanSchedule}`;
     
     return {
       twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(pageUrl)}`,
       facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}&quote=${encodeURIComponent(shareText)}`,
-      email: `mailto:?subject=${encodeURIComponent('Join ' + activityName + ' at Mergington High School')}&body=${encodeURIComponent(shareText + '\n\nVisit: ' + pageUrl)}`
+      email: `mailto:?subject=${encodeURIComponent('Join ' + cleanName + ' at Mergington High School')}&body=${encodeURIComponent(shareText + '\n\nVisit: ' + pageUrl)}`
     };
   }
 
@@ -488,8 +508,9 @@ document.addEventListener("DOMContentLoaded", () => {
   function handleShare(platform, activityName, description, schedule) {
     const shareLinks = generateShareLinks(activityName, description, schedule);
     
+    // Use window.open for all platforms for consistency
     if (platform === 'email') {
-      window.location.href = shareLinks.email;
+      window.open(shareLinks.email, '_self');
     } else {
       window.open(shareLinks[platform], '_blank', 'width=600,height=400');
     }
@@ -543,20 +564,21 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
 
     // Create social share buttons
+    const escapedName = escapeHtml(name);
     const shareButtonsHtml = `
       <div class="share-buttons">
         <span class="share-label">Share:</span>
-        <button class="share-btn share-twitter" data-platform="twitter" data-activity="${name}" title="Share on Twitter">
+        <button class="share-btn share-twitter" data-platform="twitter" data-activity="${escapedName}" title="Share on Twitter">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
             <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
           </svg>
         </button>
-        <button class="share-btn share-facebook" data-platform="facebook" data-activity="${name}" title="Share on Facebook">
+        <button class="share-btn share-facebook" data-platform="facebook" data-activity="${escapedName}" title="Share on Facebook">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
           </svg>
         </button>
-        <button class="share-btn share-email" data-platform="email" data-activity="${name}" title="Share via Email">
+        <button class="share-btn share-email" data-platform="email" data-activity="${escapedName}" title="Share via Email">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
             <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
           </svg>
@@ -566,10 +588,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     activityCard.innerHTML = `
       ${tagHtml}
-      <h4>${name}</h4>
-      <p>${details.description}</p>
+      <h4>${escapeHtml(name)}</h4>
+      <p>${escapeHtml(details.description)}</p>
       <p class="tooltip">
-        <strong>Schedule:</strong> ${formattedSchedule}
+        <strong>Schedule:</strong> ${escapeHtml(formattedSchedule)}
         <span class="tooltip-text">Regular meetings at this time throughout the semester</span>
       </p>
       ${capacityIndicator}
@@ -581,11 +603,11 @@ document.addEventListener("DOMContentLoaded", () => {
             .map(
               (email) => `
             <li>
-              ${email}
+              ${escapeHtml(email)}
               ${
                 currentUser
                   ? `
-                <span class="delete-participant tooltip" data-activity="${name}" data-email="${email}">
+                <span class="delete-participant tooltip" data-activity="${escapedName}" data-email="${escapeHtml(email)}">
                   ✖
                   <span class="tooltip-text">Unregister this student</span>
                 </span>
@@ -602,7 +624,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ${
           currentUser
             ? `
-          <button class="register-button" data-activity="${name}" ${
+          <button class="register-button" data-activity="${escapedName}" ${
                 isFull ? "disabled" : ""
               }>
             ${isFull ? "Activity Full" : "Register Student"}
